@@ -1,0 +1,564 @@
+/* =============================================================================
+   Jaguarete Kora — Estilos
+   -----------------------------------------------------------------------------
+   Todo cuelga de #jaguarete-kora para que el bloque embebido no pueda alterar
+   el diseño del sitio anfitrión ni verse alterado por él.
+
+   Dirección estética (PRD §14.1): el marco de la interfaz dialoga con la
+   identidad de alexisdick.com (petróleo #003446 y turquesa #2DD4BF) y el
+   tablero mantiene su propio mundo de madera, tierra y dorado de jaguarete.
+   ========================================================================== */
+
+#jaguarete-kora {
+  --jk-petroleo: #003446;
+  --jk-petroleo-2: #01485f;
+  --jk-petroleo-3: #0a5d76;
+  --jk-turquesa: #2dd4bf;
+  --jk-turquesa-2: #14b8a6;
+  --jk-arena: #f4efe6;
+  --jk-arena-2: #d9cdb8;
+  --jk-dorado: #e8b23a;
+  --jk-madera: #a9713b;
+  --jk-tierra: #4a2e17;
+  --jk-texto: #eaf5f7;
+  --jk-texto-suave: #a9c6cd;
+  --jk-radio: 16px;
+  --jk-sombra: 0 18px 40px rgba(0, 20, 28, 0.35);
+
+  box-sizing: border-box;
+  max-width: 1080px;
+  margin: 0 auto;
+  /* El navegador reajusta el desplazamiento de la página cuando cambia el
+     tamaño de algo que está por encima. Durante una partida eso se percibe
+     como que el tablero «salta» a cada jugada, así que se desactiva. */
+  overflow-anchor: none;
+  padding: clamp(6px, 1vw, 10px);
+  font-family: inter, 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--jk-texto);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#jaguarete-kora *,
+#jaguarete-kora *::before,
+#jaguarete-kora *::after { box-sizing: inherit; }
+
+/* Cualquier regla de display propia gana al atributo hidden del navegador, que
+   es sólo `display: none` de hoja de estilo de usuario. Sin esto, las pantallas
+   ocultas se seguirían dibujando y el bloque mediría el doble. */
+#jaguarete-kora [hidden] { display: none !important; }
+
+#jaguarete-kora p,
+#jaguarete-kora h1,
+#jaguarete-kora h2,
+#jaguarete-kora h3,
+#jaguarete-kora ul { margin: 0; }
+
+#jaguarete-kora .jk-marco {
+  /* Misma altura en la portada y en la partida: ui.js la calcula a partir del
+     tamaño del tablero. */
+  min-height: var(--jk-marco-alto, auto);
+  background: radial-gradient(120% 100% at 50% 0%, var(--jk-petroleo-2), var(--jk-petroleo) 62%);
+  border-radius: calc(var(--jk-radio) + 6px);
+  box-shadow: var(--jk-sombra);
+  overflow: hidden;
+}
+
+/* --- Pantalla de inicio --------------------------------------------------- */
+
+#jaguarete-kora .jk-inicio {
+  display: grid;
+  align-content: center;
+  gap: clamp(10px, 1.6vw, 14px);
+  padding: clamp(14px, 2.2vw, 22px);
+  text-align: center;
+}
+
+/* En cuanto hay ancho, los dos grupos de opciones comparten fila: el bloque se
+   publica dentro de un iframe cuya altura fija el sitio anfitrión, así que cada
+   línea que se ahorra es altura que gana el tablero. */
+#jaguarete-kora .jk-grupos {
+  display: grid;
+  gap: clamp(10px, 1.6vw, 14px);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  text-align: left;
+}
+
+#jaguarete-kora .jk-titulo {
+  font-size: clamp(1.7rem, 5vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  background: linear-gradient(100deg, var(--jk-dorado), #f6d98a 55%, var(--jk-turquesa));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#jaguarete-kora .jk-subtitulo {
+  font-size: clamp(0.72rem, 2vw, 0.82rem);
+  color: var(--jk-turquesa);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#jaguarete-kora .jk-entradilla {
+  max-width: 62ch;
+  margin: 0 auto;
+  color: var(--jk-texto-suave);
+  font-size: clamp(0.88rem, 2.2vw, 0.95rem);
+  line-height: 1.45;
+}
+
+#jaguarete-kora .jk-grupo { display: grid; gap: 7px; }
+
+#jaguarete-kora .jk-etiqueta-grupo {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--jk-texto-suave);
+  font-weight: 600;
+}
+
+#jaguarete-kora .jk-opciones {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+}
+
+#jaguarete-kora .jk-opcion input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#jaguarete-kora .jk-opcion > span {
+  display: grid;
+  gap: 2px;
+  padding: 8px 13px;
+  min-height: 46px;
+  align-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--jk-radio);
+  background: rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.18s;
+}
+
+#jaguarete-kora .jk-opcion:hover > span { border-color: rgba(45, 212, 191, 0.5); }
+
+#jaguarete-kora .jk-opcion input:checked + span {
+  border-color: var(--jk-turquesa);
+  background: rgba(45, 212, 191, 0.16);
+}
+
+/* El foco de teclado debe verse siempre, también sobre las tarjetas. */
+#jaguarete-kora .jk-opcion input:focus-visible + span,
+#jaguarete-kora button:focus-visible,
+#jaguarete-kora .jk-toque:focus-visible {
+  outline: 3px solid var(--jk-turquesa);
+  outline-offset: 3px;
+}
+
+#jaguarete-kora .jk-opcion-nombre { font-weight: 700; font-size: 1rem; }
+#jaguarete-kora .jk-opcion-pista { font-size: 0.82rem; color: var(--jk-texto-suave); }
+
+/* --- Botones -------------------------------------------------------------- */
+
+#jaguarete-kora button {
+  font: inherit;
+  border: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: transform 0.15s, background 0.18s, box-shadow 0.18s;
+}
+
+#jaguarete-kora button:active { transform: scale(0.97); }
+
+#jaguarete-kora .jk-boton-principal {
+  justify-self: center;
+  padding: 12px 38px;
+  min-height: 48px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #04222c;
+  background: linear-gradient(135deg, var(--jk-turquesa), var(--jk-turquesa-2));
+  box-shadow: 0 10px 24px rgba(45, 212, 191, 0.28);
+}
+
+#jaguarete-kora .jk-boton-secundario {
+  padding: 9px 15px;
+  min-height: 40px;
+  font-weight: 600;
+  color: var(--jk-texto);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+#jaguarete-kora .jk-boton-secundario:hover { background: rgba(255, 255, 255, 0.14); }
+
+#jaguarete-kora .jk-enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* --- Cabecera de la partida ----------------------------------------------- */
+
+#jaguarete-kora .jk-juego { display: grid; gap: 8px; padding: clamp(4px, 1.2vw, 10px); }
+
+/* Toda la barra tiene medidas fijas a propósito: si el indicador de turno o los
+   contadores cambiasen de ancho al jugar, las líneas se reordenarían y el
+   tablero se desplazaría en cada jugada. */
+#jaguarete-kora .jk-barra {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+#jaguarete-kora .jk-turno {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 7px 14px;
+  min-width: 15rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+#jaguarete-kora .jk-turno::before {
+  content: '';
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#jaguarete-kora .jk-turno-jaguarete { color: var(--jk-dorado); }
+#jaguarete-kora .jk-turno-jaguakuera { color: var(--jk-arena); }
+/* La forma del indicador también cambia: no dependemos sólo del color. */
+#jaguarete-kora .jk-turno-jaguakuera::before { border-radius: 3px; }
+
+#jaguarete-kora .jk-marcador {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#jaguarete-kora .jk-dato {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 0.82rem;
+  color: var(--jk-texto-suave);
+}
+
+#jaguarete-kora .jk-dato b {
+  font-size: 1.15rem;
+  color: var(--jk-texto);
+  display: inline-block;
+  min-width: 1.5em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+#jaguarete-kora .jk-acciones { display: flex; gap: 8px; }
+
+#jaguarete-kora .jk-silencio.jk-mudo { opacity: 0.55; }
+
+/* --- Tablero -------------------------------------------------------------- */
+
+#jaguarete-kora .jk-lienzo {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+/* El tablero debe caber entero en pantalla sin desplazarse (PRD §16).
+
+   No se usan unidades de ventana (vh, svh): el juego se publica dentro de un
+   iframe de otro dominio, donde 100vh es la altura del propio iframe y no la de
+   la ventana. Como esa altura la fija el anfitrión según el alto del contenido,
+   dimensionar el tablero con vh crea un bucle: tablero más grande, contenido más
+   alto, iframe más alto, tablero más grande todavía.
+
+   El límite lo calcula ui.js a partir del tamaño de la pantalla, que sí es un
+   dato estable y accesible desde el iframe. Este valor es sólo la reserva por si
+   ese cálculo no llegara a ejecutarse. */
+#jaguarete-kora svg.jk-tablero-svg {
+  /* Ancho definido en píxeles, no en porcentaje: el marco se ciñe al contenido
+     durante la partida, y un porcentaje dentro de un contenedor que se mide por
+     su contenido no tiene contra qué resolverse. */
+  width: var(--jk-tablero-max, 320px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+#jaguarete-kora .jk-lineas line {
+  stroke: #4a2e17;
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+#jaguarete-kora .jk-nodos circle { fill: #3b2410; opacity: 0.75; }
+
+/* El kora se insinúa con una mancha suave, nunca con un trazo: cualquier línea
+   dibujada sobre el tablero se lee como una conexión por la que se puede mover,
+   y los lados de este triángulo no son conexiones legales. */
+#jaguarete-kora .jk-kora-area {
+  fill: rgba(232, 178, 58, 0.13);
+  stroke: none;
+}
+
+#jaguarete-kora .jk-etiqueta {
+  fill: #46290f;
+  opacity: 0.62;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
+#jaguarete-kora .jk-toque { fill: transparent; cursor: pointer; }
+
+#jaguarete-kora .jk-pieza {
+  transition: transform 0.24s cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+
+#jaguarete-kora .jk-pieza.jk-seleccionada .jk-rostro,
+#jaguarete-kora .jk-pieza.jk-seleccionada polygon { filter: brightness(1.12); }
+
+#jaguarete-kora .jk-pieza.jk-seleccionada {
+  /* La selección se marca con un halo y con escala, no sólo con color. */
+  filter: drop-shadow(0 0 10px var(--jk-turquesa));
+}
+
+#jaguarete-kora .jk-capturada {
+  transition: opacity 0.36s, transform 0.36s;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#jaguarete-kora .jk-marca-libre {
+  fill: var(--jk-turquesa);
+  opacity: 0.85;
+}
+
+#jaguarete-kora .jk-marca-captura {
+  fill: none;
+  stroke: var(--jk-dorado);
+  stroke-width: 5;
+  stroke-dasharray: 9 7;
+  animation: jk-girar 5s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+#jaguarete-kora .jk-marca-presa {
+  stroke: #c0392b;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+#jaguarete-kora .jk-ultimo {
+  fill: none;
+  stroke: rgba(45, 212, 191, 0.55);
+  stroke-width: 3;
+}
+
+#jaguarete-kora .jk-ilegal {
+  fill: none;
+  stroke: #c0392b;
+  stroke-width: 5;
+  animation: jk-latido 0.4s ease-out;
+}
+
+@keyframes jk-girar { to { transform: rotate(360deg); } }
+@keyframes jk-latido {
+  0% { opacity: 1; transform: scale(0.85); }
+  100% { opacity: 0; transform: scale(1.25); }
+}
+
+/* --- Final de partida ----------------------------------------------------- */
+
+#jaguarete-kora .jk-fin {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 24px;
+  border-radius: var(--jk-radio);
+  background: rgba(0, 25, 34, 0.86);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#jaguarete-kora .jk-fin.jk-visible { opacity: 1; }
+#jaguarete-kora .jk-fin[hidden] { display: none; }
+
+#jaguarete-kora .jk-fin-titulo {
+  font-size: clamp(1.6rem, 6vw, 2.4rem);
+  font-weight: 800;
+  color: var(--jk-dorado);
+}
+
+#jaguarete-kora .jk-fin-texto { color: var(--jk-texto-suave); max-width: 34ch; }
+
+#jaguarete-kora .jk-fin-botones { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+/* --- Diálogo de contenidos ------------------------------------------------ */
+
+#jaguarete-kora .jk-dialogo {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 15, 22, 0.72);
+}
+
+#jaguarete-kora .jk-dialogo[hidden] { display: none; }
+
+#jaguarete-kora .jk-dialogo-caja {
+  width: min(660px, 100%);
+  max-height: min(80vh, 720px);
+  overflow-y: auto;
+  padding: clamp(20px, 4vw, 32px);
+  border-radius: var(--jk-radio);
+  background: linear-gradient(180deg, var(--jk-petroleo-2), var(--jk-petroleo));
+  box-shadow: var(--jk-sombra);
+  text-align: left;
+}
+
+#jaguarete-kora .jk-dialogo-caja h3 {
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  color: var(--jk-dorado);
+}
+
+#jaguarete-kora .jk-dialogo-cuerpo { display: grid; gap: 12px; color: var(--jk-texto-suave); }
+#jaguarete-kora .jk-dialogo-cuerpo h4 { color: var(--jk-turquesa); font-size: 1rem; margin-top: 6px; }
+#jaguarete-kora .jk-dialogo-cuerpo ul { padding-left: 20px; display: grid; gap: 6px; }
+#jaguarete-kora .jk-dialogo-cuerpo strong { color: var(--jk-texto); }
+#jaguarete-kora .jk-dialogo-cuerpo a { color: var(--jk-turquesa); }
+
+/* --- Pie ------------------------------------------------------------------ */
+
+#jaguarete-kora .jk-pie {
+  margin-top: 2px;
+  text-align: center;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+#jaguarete-kora .jk-pie a { color: rgba(45, 212, 191, 0.85); text-decoration: none; }
+#jaguarete-kora .jk-pie a:hover { text-decoration: underline; }
+
+/* --- Accesibilidad -------------------------------------------------------- */
+
+#jaguarete-kora .jk-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #jaguarete-kora .jk-pieza,
+  #jaguarete-kora .jk-fin,
+  #jaguarete-kora button { transition: none; }
+  #jaguarete-kora .jk-marca-captura,
+  #jaguarete-kora .jk-ilegal { animation: none; }
+}
+
+/* En pantallas pequeñas la pantalla de inicio debe caber sin desplazamiento:
+   el botón de jugar tiene que verse sin buscarlo. */
+/* En cuanto hay ancho, el panel de la partida pasa al lado del tablero en lugar
+   de encima. Esto aprovecha el espacio horizontal, que sobraba, y devuelve al
+   tablero toda la altura del bloque, que es el recurso escaso dentro del
+   iframe. */
+@media (min-width: 700px) {
+  #jaguarete-kora .jk-juego {
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  #jaguarete-kora .jk-lienzo { align-self: start; }
+
+  #jaguarete-kora .jk-barra {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #jaguarete-kora .jk-acciones { margin-top: auto; }
+
+  #jaguarete-kora .jk-turno {
+    min-width: 0;
+    justify-content: flex-start;
+    font-size: 0.9rem;
+  }
+
+  #jaguarete-kora .jk-marcador { flex-direction: column; gap: 6px; }
+  #jaguarete-kora .jk-dato { justify-content: space-between; }
+  #jaguarete-kora .jk-acciones { flex-wrap: wrap; }
+
+  /* El marco conserva todo el ancho del bloque, igual que en la portada, y lo
+     que se centra dentro es el conjunto de panel y tablero. Ceñir el marco al
+     contenido hacía que el recuadro pareciera encogerse al empezar a jugar. */
+  #jaguarete-kora .jk-juego {
+    grid-template-columns: minmax(170px, 210px) auto;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  #jaguarete-kora { padding: 4px; }
+  /* Contadores y botones comparten fila: cada fila que se ahorra el panel es
+     altura que gana el tablero. */
+  #jaguarete-kora .jk-barra { gap: 6px; }
+  #jaguarete-kora .jk-marcador { gap: 6px; }
+  #jaguarete-kora .jk-acciones { gap: 6px; }
+  #jaguarete-kora .jk-dato { padding: 5px 9px; font-size: 0.75rem; }
+  #jaguarete-kora .jk-dato b { font-size: 1rem; }
+  #jaguarete-kora .jk-boton-secundario { padding: 7px 11px; min-height: 36px; font-size: 0.9rem; }
+  #jaguarete-kora .jk-turno { padding: 6px 12px; font-size: 0.88rem; min-width: 0; flex: 1 1 100%; }
+  #jaguarete-kora .jk-opciones { grid-template-columns: 1fr 1fr; gap: 8px; }
+  /* Los tres niveles caben en una sola fila: ahorra una fila entera de altura,
+     que es justo lo que hacía que la cabecera fija cortara el bloque por arriba. */
+  #jaguarete-kora .jk-grupo:last-child .jk-opciones { grid-template-columns: repeat(3, 1fr); }
+  #jaguarete-kora .jk-grupo:last-child .jk-opcion > span { padding: 8px 8px; }
+  #jaguarete-kora .jk-opcion-pista { font-size: 0.7rem; }
+  #jaguarete-kora .jk-opcion-nombre { font-size: 0.95rem; }
+  #jaguarete-kora .jk-inicio { padding: 20px 16px 24px; gap: 14px; }
+  #jaguarete-kora .jk-opcion > span { padding: 10px 12px; min-height: 48px; }
+  #jaguarete-kora .jk-opcion-pista { font-size: 0.74rem; line-height: 1.35; }
+  #jaguarete-kora .jk-entradilla { font-size: 0.9rem; }
+  #jaguarete-kora .jk-boton-principal { padding: 14px 40px; }
+  #jaguarete-kora .jk-pie { margin-top: 10px; }
+}

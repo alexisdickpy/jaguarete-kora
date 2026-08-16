@@ -1,0 +1,20 @@
+# Archivos generados: se reconstruyen con `python build.py`
+dist/
+
+# Documentos de trabajo y material de investigación: no forman parte del software
+*.docx
+*.pdf
+
+# Configuración local de editores y herramientas
+.vscode/
+.idea/
+*.code-workspace
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc

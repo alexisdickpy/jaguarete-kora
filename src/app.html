@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jaguarete Kora — Ñembosarái guaraní</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body style="margin:0;background:#f7f9fa">
+
+<!-- ===== INICIO BLOQUE ================================================== -->
+<div id="jaguarete-kora">
+
+  <div class="jk-marco">
+
+    <!-- ---------- Pantalla de inicio ---------- -->
+    <section class="jk-inicio" id="jk-inicio">
+      <div>
+        <h2 class="jk-subtitulo">Ñembosarái guaraní</h2>
+        <h1 class="jk-titulo">Jaguarete Kora</h1>
+      </div>
+
+      <p class="jk-entradilla">
+        Un jaguarete acorralado frente a quince jaguakuéra: uno caza, los otros cierran el cerco.
+      </p>
+
+      <div class="jk-grupos">
+      <div class="jk-grupo">
+        <span class="jk-etiqueta-grupo" id="jk-etiqueta-bando">Tu bando</span>
+        <div class="jk-opciones" role="radiogroup" aria-labelledby="jk-etiqueta-bando">
+          <label class="jk-opcion">
+            <input type="radio" name="jk-bando" value="jaguarete" checked>
+            <span>
+              <span class="jk-opcion-nombre">Jaguarete</span>
+              <span class="jk-opcion-pista">Una ficha. Captura saltando.</span>
+            </span>
+          </label>
+          <label class="jk-opcion">
+            <input type="radio" name="jk-bando" value="jaguakuera">
+            <span>
+              <span class="jk-opcion-nombre">Jaguakuéra</span>
+              <span class="jk-opcion-pista">Quince fichas. Cierran el cerco.</span>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="jk-grupo">
+        <span class="jk-etiqueta-grupo" id="jk-etiqueta-nivel">Dificultad</span>
+        <div class="jk-opciones" role="radiogroup" aria-labelledby="jk-etiqueta-nivel">
+          <label class="jk-opcion">
+            <input type="radio" name="jk-nivel" value="facil">
+            <span><span class="jk-opcion-nombre">Fácil</span>
+            <span class="jk-opcion-pista">Para aprender</span></span>
+          </label>
+          <label class="jk-opcion">
+            <input type="radio" name="jk-nivel" value="medio" checked>
+            <span><span class="jk-opcion-nombre">Medio</span>
+            <span class="jk-opcion-pista">Un reto realista</span></span>
+          </label>
+          <label class="jk-opcion">
+            <input type="radio" name="jk-nivel" value="dificil">
+            <span><span class="jk-opcion-nombre">Difícil</span>
+            <span class="jk-opcion-pista">Calcula a fondo</span></span>
+          </label>
+        </div>
+      </div>
+      </div>
+
+      <div class="jk-enlaces">
+        <button class="jk-boton-principal" data-accion="jugar">Jugar</button>
+        <button class="jk-boton-secundario" data-accion="dialogo" data-tema="reglas"
+                data-titulo="Cómo se juega">Cómo jugar</button>
+        <button class="jk-boton-secundario" data-accion="dialogo" data-tema="cultura"
+                data-titulo="Sobre el Jaguarete Kora">Sobre el juego</button>
+      </div>
+      <button class="jk-boton-secundario" id="jk-continuar" hidden>Continuar la partida anterior</button>
+
+      <!-- La firma vive dentro del marco: fuera quedaría sobre el fondo claro
+           del sitio anfitrión y no se leería. -->
+      <p class="jk-pie" id="jk-pie">
+        <strong>Jaguarete Kora</strong> · Desarrollado por
+        <a href="https://alexisdick.com" target="_blank" rel="noopener">Alexis Dick</a>
+      </p>
+    </section>
+
+    <!-- ---------- Pantalla de partida ---------- -->
+    <section class="jk-juego" id="jk-juego" hidden>
+      <div class="jk-barra">
+        <span class="jk-turno" id="jk-turno">Turno del Jaguarete</span>
+        <div class="jk-marcador" id="jk-marcador">
+          <span class="jk-dato">Capturas <b id="jk-capturas">0</b> / 8</span>
+          <span class="jk-dato">Jaguakuéra <b id="jk-restantes">15</b></span>
+        </div>
+        <div class="jk-acciones">
+          <button class="jk-boton-secundario jk-silencio" id="jk-silencio" data-accion="silencio"
+                  aria-pressed="false">
+            <span aria-hidden="true">♪</span>
+            <span class="jk-oculto jk-silencio-texto">Sonido activado</span>
+          </button>
+          <button class="jk-boton-secundario" data-accion="dialogo" data-tema="reglas"
+                  data-titulo="Cómo se juega">Reglas</button>
+          <button class="jk-boton-secundario" data-accion="menu">Salir</button>
+        </div>
+      </div>
+
+      <div class="jk-lienzo">
+        <svg id="jk-tablero" class="jk-tablero-svg" role="img"
+             aria-label="Tablero de Jaguarete Kora"></svg>
+
+        <div class="jk-fin" id="jk-fin" hidden>
+          <h2 class="jk-fin-titulo" id="jk-fin-titulo"></h2>
+          <p class="jk-fin-texto" id="jk-fin-texto"></p>
+          <div class="jk-fin-botones">
+            <button class="jk-boton-principal" data-accion="revancha">Jugar otra vez</button>
+            <button class="jk-boton-secundario" data-accion="menu">Cambiar bando o nivel</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="jk-oculto" id="jk-estado" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+
+  <!-- ---------- Diálogo ---------- -->
+  <div class="jk-dialogo" id="jk-dialogo" hidden>
+    <div class="jk-dialogo-caja" role="dialog" aria-modal="true" aria-labelledby="jk-dialogo-titulo">
+      <h3 id="jk-dialogo-titulo"></h3>
+      <div class="jk-dialogo-cuerpo" id="jk-dialogo-cuerpo"></div>
+      <p style="margin-top:18px">
+        <button class="jk-boton-secundario" data-accion="cerrarDialogo">Cerrar</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- ---------- Textos ---------- -->
+  <template id="jk-texto-reglas">
+    <p>Dos bandos desiguales: un <strong>Jaguarete</strong> contra quince
+       <strong>jaguakuéra</strong> (perros). El tablero es un alquerque de 25 intersecciones con
+       una extensión triangular, <strong>el kora</strong>, donde empieza acorralado el jaguarete.</p>
+    <h4>Movimiento</h4>
+    <ul>
+      <li>Empieza siempre el <strong>Jaguarete</strong>. Se mueve una intersección por turno,
+          en cualquier dirección que permitan las líneas, incluido hacia atrás.</li>
+      <li>Los <strong>jaguakuéra</strong> mueven una ficha por turno, una intersección hacia
+          adelante, en diagonal de avance o en lateral. <strong>Nunca hacia atrás.</strong></li>
+      <li>Sólo se mueve por las líneas dibujadas: no todas las intersecciones tienen diagonal.</li>
+    </ul>
+    <h4>Capturas</h4>
+    <ul>
+      <li>Sólo captura el Jaguarete: salta por encima de un jagua contiguo y cae en la
+          intersección vacía inmediatamente posterior, en la misma línea.</li>
+      <li><strong>Una sola captura por turno</strong>: no hay saltos encadenados.</li>
+      <li>Capturar no es obligatorio. Los jaguakuéra nunca capturan.</li>
+    </ul>
+    <h4>Cómo se gana</h4>
+    <ul>
+      <li>El <strong>Jaguarete</strong> gana al capturar <strong>ocho jaguakuéra</strong>: con
+          siete fichas ya no es posible cerrarle el cerco.</li>
+      <li>Los <strong>Jaguakuéra</strong> ganan si el jaguarete se queda sin ningún movimiento legal.</li>
+      <li>Como los jaguakuéra nunca retroceden, si el jaguarete cruza su línea y se instala donde
+          ninguno puede ya llegar, el cerco es imposible y se le da la victoria.</li>
+      <li>Si los jaguakuéra no tienen ninguna jugada posible, pasan turno. Si la misma posición
+          se repite tres veces, la partida termina en tablas.</li>
+    </ul>
+  </template>
+
+  <template id="jk-texto-cultura">
+    <p>Las fuentes consultadas describen el Jaguarete Kora como un juego tradicional vinculado a
+       <strong>comunidades guaraníes</strong>, presentes en Paraguay, Argentina, Brasil y Uruguay,
+       y de manera especialmente documentada entre los <strong>Mbyá</strong>. Se ha documentado
+       que se jugaba sobre el suelo, con piedras como fichas.</p>
+    <p>El nombre puede leerse como «el corral del jaguarete»: <em>jaguarete</em> es el felino y
+       <em>kora</em>, el corral o cueva. Para el plural de <em>jagua</em> (perro) se emplea aquí
+       <em>jaguakuéra</em>.</p>
+    <h4>El tablero</h4>
+    <p>Es un <strong>alquerque</strong> de cinco por cinco intersecciones al que se añade una
+       sección triangular en uno de sus lados: <em>el kora</em>. En total, treinta y una
+       intersecciones. No todas tienen diagonales: sólo la mitad, alternadas, de modo que hay
+       nodos muy conectados y nodos casi ciegos.</p>
+
+    <h4>La asimetría, en términos matemáticos</h4>
+    <p>El juego enfrenta dos recursos distintos: <strong>movilidad</strong> contra
+       <strong>material</strong>. El jaguarete tiene libertad total de movimiento y la única
+       capacidad de captura del juego; los jaguakuéra tienen quince fichas pero un movimiento
+       irreversible, porque nunca retroceden. Esa irreversibilidad es la clave estratégica: cada
+       avance de los jaguakuéra cierra espacio, pero también consume para siempre la posibilidad
+       de volver atrás. Un avance mal calculado abre un hueco que el jaguarete puede cruzar, y
+       una vez al otro lado de la línea el cerco ya no puede rehacerse.</p>
+
+    <h4>Una familia de juegos</h4>
+    <p>El Jaguarete Kora pertenece a la familia de los <strong>juegos de caza de los pueblos
+       originarios de América</strong>: partidas asimétricas en las que una pieza cazadora, casi
+       siempre un felino, se enfrenta a un grupo numeroso que intenta acorralarla. Se han
+       documentado variantes entre comunidades guaraníes de Paraguay, Argentina, Brasil y
+       Uruguay; entre los <strong>mapuches</strong> de Chile y Argentina, con el nombre de
+       <em>komikan</em>, donde el puma (<em>pangi</em>) se enfrenta a una jauría de perros
+       (<em>trewa</em>); y en los <strong>Andes peruanos</strong>, descritas con nombres como
+       <em>taptana</em> o «el zorro y las ovejas». Varias de ellas comparten incluso el mismo
+       tablero: un alquerque ampliado con un anexo triangular que representa la guarida del
+       felino. Cambian el número de fichas, la casilla de partida del cazador y el nombre.</p>
+
+    <h4>Fuentes, variantes y adaptación digital</h4>
+    <p>La transmisión de estos juegos ha sido principalmente oral y existen variantes en las
+       reglas y en la grafía de los nombres; otras fuentes recogen formas hispanizadas como
+       «Yaguareté Korá». Esta versión digital sigue las reglas tal como aparecen recogidas en la documentación consultada, con las
+       mínimas adaptaciones necesarias para que la partida pueda resolverse en un navegador: se
+       declaran tablas cuando una posición se repite tres veces, y se da por vencedor al
+       jaguarete cuando alcanza una zona a la que los jaguakuéra, que nunca retroceden, ya no
+       pueden llegar.</p>
+
+    <h4>Contacto</h4>
+    <p>Si quieres saber más sobre el juego, pedir detalles, proponer mejoras o colaborar con el
+       proyecto, puedes escribir por el formulario de contacto de esta web o al correo
+       <a href="mailto:hola@alexisdick.com">hola@alexisdick.com</a>.</p>
+  </template>
+</div>
+<!-- ===== FIN BLOQUE ===================================================== -->
+
+<script src="engine.js"></script>
+<script src="ai.js"></script>
+<script src="view.js"></script>
+<script src="sound.js"></script>
+<script src="metrics.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jaguarete Kora — Tests</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; padding: 24px; background: #0d1b21; color: #e6f1f3; }
+  h1 { font-size: 1.4rem; margin: 0 0 6px; }
+  .resumen { padding: 12px 16px; border-radius: 10px; margin: 16px 0; font-weight: 700; }
+  .ok { background: #10331f; color: #7ee2a8; }
+  .mal { background: #3a1414; color: #ff9d9d; }
+  h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: .14em; color: #7fb3bf; margin: 22px 0 8px; }
+  li { list-style: none; padding: 3px 0; }
+  li.f { color: #ff9d9d; }
+  li.p::before { content: '✓ '; color: #7ee2a8; }
+  li.f::before { content: '✗ '; }
+  .err { color: #ffb4b4; font-size: .86rem; padding-left: 18px; }
+</style>
+</head>
+<body>
+<h1>Jaguarete Kora — batería de tests</h1>
+<div id="resumen" class="resumen">Ejecutando…</div>
+<div id="detalle"></div>
+
+<script src="../src/engine.js"></script>
+<script src="../src/ai.js"></script>
+<script src="../src/view.js"></script>
+<script src="suite.js"></script>
+<script>
+(function () {
+  const informe = ejecutar();
+  const total = informe.total, fallos = informe.fallos, lista = informe.resultados;
+
+  const resumen = document.getElementById('resumen');
+  resumen.className = 'resumen ' + (fallos === 0 ? 'ok' : 'mal');
+  resumen.textContent = fallos === 0
+    ? `${total} tests, todos correctos`
+    : `${fallos} de ${total} tests han fallado`;
+
+  const detalle = document.getElementById('detalle');
+  let ultimoGrupo = null;
+  for (const r of lista) {
+    if (r.grupo !== ultimoGrupo) {
+      ultimoGrupo = r.grupo;
+      const h = document.createElement('h2');
+      h.textContent = ultimoGrupo;
+      detalle.appendChild(h);
+    }
+    const li = document.createElement('li');
+    li.className = r.ok ? 'p' : 'f';
+    li.textContent = r.nombre;
+    detalle.appendChild(li);
+    if (!r.ok) {
+      const e = document.createElement('div');
+      e.className = 'err';
+      e.textContent = r.error;
+      detalle.appendChild(e);
+    }
+  }
+
+  /* Salida legible para la automatización. */
+  console.log('RESULTADO_TESTS ' + JSON.stringify({ total, fallos,
+    fallidos: lista.filter(r => !r.ok).map(r => r.grupo + ' :: ' + r.nombre + ' :: ' + r.error) }));
+})();
+</script>
+</body>
+</html>
