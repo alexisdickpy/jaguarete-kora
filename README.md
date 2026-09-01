@@ -1,132 +1,131 @@
 # Jaguarete Kora
 
-Implementación web de **Jaguarete Kora** (*ñembosarái guaraní*), un juego de tablero
-tradicional de estrategia vinculado a comunidades guaraníes: un jaguarete acorralado
-se enfrenta a quince *jaguakuéra*. Uno caza, los otros cierran el cerco.
+A web implementation of **Jaguarete Kora** (*ñembosarái guaraní*), a traditional strategy
+board game linked to Guaraní communities: a cornered jaguarete faces fifteen *jaguakuéra*.
+One hunts, the others close the circle.
 
-Jugable en **[alexisdick.com/jaguarete-kora](https://alexisdick.com/jaguarete-kora)**,
-contra la máquina, en tres niveles de dificultad y sin registro.
-
----
-
-## El juego
-
-Dos bandos desiguales sobre un **alquerque** de cinco por cinco intersecciones al que
-se añade una extensión triangular, el *kora*, donde comienza acorralado el jaguarete.
-Treinta y una intersecciones en total.
-
-- El **Jaguarete** mueve una intersección por turno en cualquier dirección que permitan
-  las líneas, y es el único que captura: salta por encima de un jagua contiguo y cae en
-  la intersección vacía inmediatamente posterior. Una sola captura por turno.
-- Los **Jaguakuéra** mueven una ficha por turno hacia adelante, en diagonal de avance o
-  en lateral, y **nunca hacia atrás**. No capturan jamás.
-- Gana el Jaguarete con ocho capturas. Ganan los Jaguakuéra si lo dejan sin ningún
-  movimiento legal.
-
-La irreversibilidad del avance de los jaguakuéra es la clave estratégica: cada avance
-cierra espacio pero consume para siempre la posibilidad de volver atrás.
+Playable at **[alexisdick.com/jaguarete-kora](https://alexisdick.com/jaguarete-kora)**,
+against the machine, at three difficulty levels and with no sign-up.
 
 ---
 
-## Arquitectura
+## Architecture
 
-Sin dependencias externas: ni bibliotecas, ni fuentes, ni imágenes, ni peticiones de red.
-Todo el dibujo es SVG generado en el navegador y los sonidos se sintetizan con la Web
-Audio API. El resultado cabe en un único archivo autónomo.
+No external dependencies: no libraries, no fonts, no images, no network requests. All the
+drawing is SVG generated in the browser and every sound is synthesised with the Web Audio
+API. The result fits in a single self-contained file.
 
 ```
 src/
-  engine.js     Motor de reglas. Grafo explícito de 31 nodos, generación de
-                movimientos, capturas, condiciones de final y detección de tablas.
-  ai.js         Oponente: negamax con poda alfa-beta, profundización iterativa
-                acotada por tiempo, tabla de transposición y evaluación posicional.
-  view.js       Dibujo del tablero en SVG y orientación según el bando del jugador.
-  sound.js      Sonidos por síntesis modal, sin archivos de audio.
-  metrics.js    Métricas anónimas de producto, con destino desacoplado.
-  ui.js         Controlador: pantallas, turnos, interacción y persistencia.
-  styles.css    Estilos, todos bajo #jaguarete-kora.
-  app.html      Marcado y textos.
+  engine.js     Rules engine. Explicit graph of 31 nodes, move generation,
+                captures, end conditions and draw detection.
+  ai.js         Opponent: negamax with alpha-beta pruning, time-bounded
+                iterative deepening, transposition table and positional
+                evaluation.
+  view.js       SVG board rendering, oriented to the player's own side.
+  sound.js      Modal synthesis. No audio files.
+  metrics.js    Anonymous product metrics, with a decoupled destination.
+  ui.js         Controller: screens, turns, interaction and persistence.
+  styles.css    Styles, all scoped under #jaguarete-kora.
+  app.html      Markup and copy.
 
-backend/        Servicio opcional de métricas (Cloudflare Workers + D1).
-tests/          Batería de tests ejecutable en el navegador.
-build.py        Genera el archivo desplegable a partir de src/.
+backend/        Optional metrics service (Cloudflare Workers + D1).
+tests/          Test suite, runnable in the browser.
+build.py        Builds the deployable file from src/.
 ```
 
-### Decisiones de diseño
+### Design decisions
 
-**El tablero es un grafo, no una cuadrícula.** Las diagonales del alquerque existen sólo
-en la mitad de las intersecciones, alternadas. Modelarlo como matriz produciría
-movimientos que el tablero no permite, así que la legalidad de cada jugada la decide
-siempre la lista de aristas. Las coordenadas sólo sirven para dibujar y para comprobar
-la colinealidad de los saltos.
+**The board is a graph, not a grid.** The alquerque diagonals exist at only half of the
+intersections, alternating. Modelling it as a matrix would produce moves the board does
+not allow, so the legality of every move is always decided by the edge list. Coordinates
+serve only to draw, and to check that jumps are collinear.
 
-**La orientación es una capa de dibujo.** Cada jugador ve su bando delante, pero la
-identidad de los nodos y el estado de la partida son idénticos: rotar es reflejar el
-punto respecto del centro del lienzo. Esto deja la puerta abierta a un modo en línea
-donde ambos clientes rendericen la misma posición desde su propio lado.
+**Orientation is a drawing layer.** Each player sees their own side in front of them, but
+node identity and game state are identical: rotating means reflecting the point about the
+centre of the canvas. This leaves the door open to an online mode where both clients
+render the same position from their own side.
 
-**El motor no sabe nada de pantallas.** No importa `view`, `ui` ni `sound`. Puede
-ejecutarse en un servidor para validar jugadas sin tocar una línea.
-
-### Sobre las reglas
-
-Se siguen las reglas tal como aparecen recogidas en la documentación consultada, con dos
-adaptaciones mínimas para que una partida pueda resolverse siempre en un navegador:
-
-- La repetición triple de una misma posición se declara tablas.
-- Si el jaguarete alcanza una zona que ningún jagua podrá pisar nunca —posible porque
-  no retroceden—, se le da la victoria: el cerco ya es imposible. Es la misma lógica que
-  la regla tradicional aplica a las ocho capturas.
-
-Sin la segunda, entre tres y cuatro de cada cinco partidas terminaban en tablas por
-repetición tras más de 150 jugadas. Con ella, el reparto entre bandos queda equilibrado.
+**The engine knows nothing about screens.** It does not import `view`, `ui` or `sound`.
+It can run on a server to validate moves without touching a line.
 
 ---
 
-## Construir y probar
+## The game
 
-Sólo hace falta Python 3 para construir y un navegador para probar.
+Two unequal sides on a five-by-five *alquerque* of intersections, extended by a triangle
+— the *kora* — where the jaguarete starts out cornered. Thirty-one intersections in all.
+
+- The **Jaguarete** moves one intersection per turn in any direction the lines allow, and
+is the only side that captures: it jumps over an adjacent jagua and lands on the empty
+intersection immediately beyond. One capture per turn.
+- The **Jaguakuéra** move one piece per turn forwards, diagonally forwards or sideways,
+and **never backwards**. They never capture.
+- The Jaguarete wins with eight captures. The Jaguakuéra win if they leave it with no
+legal move.
+
+The irreversibility of the jaguakuéra advance is the strategic key: every advance closes
+space, but spends for good the possibility of going back.
+
+### On the rules
+
+The game follows the rules as recorded in the documentation consulted, with two minimal
+adaptations so that a game can always be resolved in a browser:
+
+- Threefold repetition of the same position is declared a draw.
+- If the jaguarete reaches a zone no jagua will ever be able to occupy — possible because
+they never retreat — it is awarded the win: the encirclement is already impossible. It is
+the same logic the traditional rule applies to the eight captures.
+
+Without the second, three to four of every five games ended in a draw by repetition after
+more than 150 moves. With it, the two sides come out balanced.
+
+---
+
+## Build and test
+
+Python 3 to build and a browser to test. Nothing else.
 
 ```bash
 python build.py
 ```
 
-Genera en `dist/` el archivo desplegable y avisa si supera el límite de caracteres del
-sitio anfitrión.
+This writes the deployable file to `dist/` and warns if it exceeds the character limit of
+the host site.
 
 ```bash
 python -m http.server 8765
 ```
 
-Y en el navegador:
+Then, in the browser:
 
-- `http://localhost:8765/src/app.html` — versión de desarrollo, con los módulos separados
-- `http://localhost:8765/tests/index.html` — batería de tests
+- `http://localhost:8765/src/app.html` — development version, with the modules kept apart
+- `http://localhost:8765/tests/index.html` — test suite
 
-Los tests cubren la geometría del tablero, la posición inicial, los movimientos de ambos
-bandos, las capturas, todas las condiciones de final, la orientación y el comportamiento
-de la IA en los tres niveles. Deben pasar todos antes de publicar.
-
----
-
-## Métricas
-
-`metrics.js` recoge eventos agregados de producto —qué bando y dificultad se eligen, cómo
-terminan las partidas y en qué punto se abandonan— sin datos personales, sin cookies y sin
-registrar el contenido de las jugadas.
-
-La constante `ENDPOINT` está vacía en este repositorio: **cada instalación configura la
-suya**. Vacía, el juego no realiza ninguna petición de red y funciona de forma totalmente
-autónoma. En `backend/` está el servicio que las recibe, pensado para el plan gratuito de
-Cloudflare Workers con una base D1.
+The tests cover board geometry, the starting position, the moves of both sides, captures,
+every end condition, orientation, and the behaviour of the AI at all three levels. They
+must all pass before publishing.
 
 ---
 
-## Despliegue
+## Metrics
 
-En [DESPLIEGUE.md](DESPLIEGUE.md) están las instrucciones completas, incluidas las
-particularidades de publicar el juego dentro de un bloque de código embebido.
+`metrics.js` collects aggregate product events — which side and difficulty are chosen, how
+games end, and where they are abandoned — with no personal data, no cookies, and no record
+of the moves themselves.
+
+The `ENDPOINT` constant is empty in this repository: **each installation configures its
+own**. Left empty, the game makes no network request at all and runs entirely on its own.
+`backend/` holds the service that receives them, built for the Cloudflare Workers free
+plan with a D1 database.
 
 ---
 
-Un proyecto de **Alexis Dick** · [alexisdick.com](https://alexisdick.com)
+## Deployment
+
+[DESPLIEGUE.md](DESPLIEGUE.md) has the full instructions, including the particulars of
+publishing the game inside an embedded code block.
+
+---
+
+A project by **Alexis Dick** · [alexisdick.com](https://alexisdick.com)
